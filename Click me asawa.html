@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be Mine?</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffe5ec;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+            z-index: 10;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #ff4d6d;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            min-height: 80px; /* Prevents layout jumping */
+        }
+
+        .buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease-out;
+            z-index: 1000;
+        }
+
+        #noBtn {
+            background-color: #adb5bd;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        #celebration {
+            display: none;
+            text-align: center;
+        }
+
+        .heart-bg {
+            position: absolute;
+            top: -10px;
+            font-size: 20px;
+            color: #ff4d6d;
+            opacity: 0.6;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <h1 id="question">Will you be my Valentine Asawa? 🌹</h1>
+        <div class="buttons">
+            <button id="yesBtn" onclick="celebrate()">Yes</button>
+            <button id="noBtn" onmouseover="teleportNo()" onclick="handleNoClick()">No</button>
+        </div>
+    </div>
+
+    <div id="celebration">
+        <h1 style="color: white; font-size: 3rem;">YAY! ❤️</h1>
+        <p style="color: white; font-size: 1.5rem;">I Love You Asawa!!</p>
+    </div>
+
+    <script>
+        let yesScale = 1;
+        let noClicks = 0;
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const question = document.getElementById('question');
+
+        const messages = [
+            "Are you sure?",
+            "Really sure??",
+            "Think again!",
+            "Last chance!",
+            "You're breaking my heart...",
+            "Okay, fine. Choose anyway."
+        ];
+
+        // 1. Logic for clicking "No"
+        function handleNoClick() {
+            noClicks++;
+            
+            // Make Yes bigger
+            yesScale += 0.7;
+            yesBtn.style.transform = `scale(${yesScale})`;
+
+            // Update text based on click count
+            if (noClicks < messages.length) {
+                question.innerText = messages[noClicks];
+                teleportNo(); // Move it immediately when clicked
+            } else {
+                // After the last message, the No button disappears
+                noBtn.style.display = 'none';
+                question.innerText = "There is no No anymore. Only Yes. ❤️";
+            }
+        }
+
+        // 2. Logic for "No" button running away
+        function teleportNo() {
+            // Only starts running away after the first click
+            if (noClicks > 0) {
+                noBtn.style.position = 'fixed';
+                
+                // Calculate random spot on screen
+                const padding = 100;
+                const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+                const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+                
+                const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+                const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+                noBtn.style.left = randomX + 'px';
+                noBtn.style.top = randomY + 'px';
+            }
+        }
+
+        // 3. Success state
+        function celebrate() {
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('celebration').style.display = 'block';
+            document.body.style.backgroundColor = '#ff4d6d';
+            
+            // Trigger heart rain
+            setInterval(createHeart, 200);
+        }
+
+        // 4. Visual Flourish (Falling Hearts)
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
